@@ -89,4 +89,11 @@ module "mysqlDb" {
   }
 }
 
+# Future work 
+module "elastic_beanstalk_application" {
+  source = "cloudposse/elastic-beanstalk-application/aws"
+}
 
+module "elastic_beanstalk_environment" {
+  
+}
