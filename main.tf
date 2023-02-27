@@ -19,6 +19,19 @@ module "vpc" {
   create_database_subnet_group = true
 }
 
+module "subnets" {
+  source  = "cloudposse/dynamic-subnets/aws"
+  version = "0.39.8"
+
+  availability_zones   = var.availability_zones
+  vpc_id               = module.vpc.vpc_id
+  igw_id               = module.vpc.igw_id
+  cidr_block           = module.vpc.vpc_cidr_block
+  nat_gateway_enabled  = true
+  nat_instance_enabled = false
+}
+
+
 module "mysql_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 4.0"
@@ -44,19 +57,19 @@ module "mysqlDb" {
   source  = "terraform-aws-modules/rds/aws"
   version = "5.4"
 
-  identifier             = "${var.identifier}-demo"
-  engine                 = var.engine
-  engine_version         = var.engine_version
-  major_engine_version   = var.major_engine_version
-  instance_class         = var.instance_class
-  allocated_storage      = var.allocated_storage
-  max_allocated_storage  = var.max_allocated_storage
-  monitoring_interval    = var.monitoring_interval
-  family                 = var.family
-  username               = var.username
-  multi_az               = var.multi_az
-  storage_encrypted      = var.storage_encrypted
-  db_subnet_group_name   = module.vpc.database_subnet_group
+  identifier            = "${var.identifier}-demo"
+  engine                = var.engine
+  engine_version        = var.engine_version
+  major_engine_version  = var.major_engine_version
+  instance_class        = var.instance_class
+  allocated_storage     = var.allocated_storage
+  max_allocated_storage = var.max_allocated_storage
+  monitoring_interval   = var.monitoring_interval
+  family                = var.family
+  username              = var.username
+  multi_az              = var.multi_az
+  storage_encrypted     = var.storage_encrypted
+  db_subnet_group_name  = module.vpc.database_subnet_group
   # vpc_security_group_ids = [module.mysql_security_group.security_group_id]
 
   blue_green_update = {
@@ -92,8 +105,9 @@ module "mysqlDb" {
 # Future work 
 module "elastic_beanstalk_application" {
   source = "cloudposse/elastic-beanstalk-application/aws"
-}
-
-module "elastic_beanstalk_environment" {
   
 }
+
+# module "elastic_beanstalk_environment" {
+
+# }
